@@ -1,0 +1,32 @@
+{
+  "name": "lissajous-curve-table",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --open --colors --https"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Supacoco/lissajous-curve-table.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Supacoco/lissajous-curve-table/issues"
+  },
+  "homepage": "https://github.com/Supacoco/lissajous-curve-table#readme",
+  "dependencies": {
+    "p5": "^0.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "babel-loader": "^8.0.5",
+    "babel-preset-env": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
+  }
+}
