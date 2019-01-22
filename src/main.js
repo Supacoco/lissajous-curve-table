@@ -7,31 +7,30 @@ document.querySelector('body')
   .appendChild(root)
 
 new P5(p5 => {
-  const WIDTH = 600
-  const HEIGHT = 600
-
-  const D = 200
+  const WIDTH = 700
+  const HEIGHT = 700
+  const D = 50
   const R = D / 2
   const OFFSET = R / 2 + D / 2
-
-  const COEF_1 = 0.01
-  const COEF_2 = COEF_1 * 2
-  const COEF_3 = COEF_1 * 3
-  const COEF_4 = COEF_1 * 4
-  const COEF_5 = COEF_1 * 5
-  const COEF_6 = COEF_1 * 6
-  const COEF_7 = COEF_1 * 7
-  const COEF_8 = COEF_1 * 8
-  const COEF_9 = COEF_1 * 9
-  const COEF_10 = COEF_1 * 10
-
+  const ITERATION = Math.floor(WIDTH / (D + OFFSET)) - 1
+  const COEF = 0.01
   const INITIAL_ANGLE = -p5.HALF_PI
 
-  let angle
-  let angleX
-  let angleY
+  const angles = new Array(ITERATION + 1).fill(INITIAL_ANGLE)
+  const curves = []
 
-  const curve = []
+  // init 2 dimensions array
+  for (let i = 1; i <= ITERATION; i++) {
+    for (let j = 1; j <= ITERATION; j++) {
+      if (!curves[i]) {
+        curves[i] = []
+      }
+      if (!curves[i][j]) {
+        curves[i][j] = []
+      }
+      curves[i][j].push([])
+    }
+  }
 
   const strokeWhite = () => {
     p5.stroke('rgba(255, 255, 255, 1)')
@@ -43,13 +42,13 @@ new P5(p5 => {
     p5.strokeWeight(1)
   }
 
-  const strokeMagenta = () => {
-    p5.stroke('rgba(232, 10, 124, 1)')
-    p5.strokeWeight(4)
+  const strokeCurve = () => {
+    p5.stroke('rgba(0, 124, 222, 1)')
+    p5.strokeWeight(1)
   }
 
   const drawCurve = (curve) => {
-    strokeMagenta()
+    strokeCurve()
 
     p5.beginShape()
     curve.forEach(dot => {
@@ -59,10 +58,6 @@ new P5(p5 => {
   }
 
   p5.setup = () => {
-    angle = INITIAL_ANGLE
-    angleX = INITIAL_ANGLE
-    angleY = INITIAL_ANGLE
-
     p5.createCanvas(WIDTH, HEIGHT)
     p5.background('#444')
     p5.noFill()
@@ -71,39 +66,39 @@ new P5(p5 => {
   p5.draw = () => {
     p5.background('#444')
 
-    const x1 = R * p5.cos(angleX)
-    const y1 = R * p5.sin(angleX)
+    for (let i = 1; i <= ITERATION; i++) {
+      const x = R * p5.cos(angles[i])
+      const y = R * p5.sin(angles[i])
+      const indiceOffset = OFFSET + i * (D + OFFSET)
 
-    const x2 = R * p5.cos(angleY)
-    const y2 = R * p5.sin(angleY)
+      strokeWhite()
 
-    strokeWhite()
+      p5.ellipse(indiceOffset, OFFSET, D, D)
+      p5.ellipse(OFFSET, indiceOffset, D, D)
 
-    p5.ellipse(OFFSET, HEIGHT / 2, D, D)
-    p5.ellipse(WIDTH / 2, OFFSET, D, D)
+      strokeWhiteAlpha()
 
-    strokeWhiteAlpha()
+      p5.line(-WIDTH, y + indiceOffset, WIDTH, y + indiceOffset)
+      p5.line(x + indiceOffset, -HEIGHT, x + indiceOffset, HEIGHT)
 
-    p5.line(-WIDTH, y1 + HEIGHT / 2, WIDTH, y1 + HEIGHT / 2)
-    p5.line(x2 + WIDTH / 2, -HEIGHT, x2 + WIDTH / 2, HEIGHT)
+      strokeWhite()
 
-    strokeWhite()
+      p5.ellipse(x + indiceOffset, y + OFFSET, 10, 10)
+      p5.ellipse(x + OFFSET, y + indiceOffset, 10, 10)
 
-    p5.ellipse(x1 + OFFSET, y1 + HEIGHT / 2, 10, 10)
-    p5.ellipse(x2 + WIDTH / 2, y2 + OFFSET, 10, 10)
+      for (let j = 1; j <= ITERATION; j++) {
+        curves[i][j].push({
+          x: R * p5.cos(angles[j]) + OFFSET + j * (D + OFFSET),
+          y: y + indiceOffset
+        })
 
-    curve.push({
-      x: x2 + WIDTH / 2,
-      y: y1 + HEIGHT / 2
-    })
+        drawCurve(curves[i][j])
+      }
 
-    drawCurve(curve)
+      angles[i] -= COEF * i
+    }
 
-    angle -= COEF_1
-    angleX -= COEF_9
-    angleY -= COEF_10
-
-    if (angle < -p5.TWO_PI + INITIAL_ANGLE) {
+    if (angles[1] < -p5.TWO_PI + INITIAL_ANGLE) {
       p5.noLoop()
     }
   }
